@@ -1,0 +1,22 @@
+:root {
+  --pkm-white: #fff;
+  --pkm-black: #222;
+  --pkm-yellow: #ffcb05;
+  --pkm-blue: #3d7dca;
+  --pkm-dark-blue: #2c6cb9;
+  --pkm-red: #D7092D;
+  --pkm-dark-red: #880103;
+  --pkm-border-thickness: 2px;
+  --pkm-border-radius: 4px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  padding-top: max(100px, env(safe-area-inset-top));
+  font-family: "VT323", monospace;
+  font-size: 2em;
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.20);
+}
