@@ -11,5 +11,7 @@ export function useGoToDetails() {
       name: 'PokemonDetails',
       params: { name }
     });
+
+    window.scrollTo(0, 0);
   }
 }

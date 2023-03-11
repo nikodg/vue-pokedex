@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const url = "https://pokeapi.co/api/v2/pokemon/";
+const BASE_URL = "https://pokeapi.co/api/v2/pokemon/";
 
-export function getImage(url, baseUrl) {
+export function getImage(url, src) {
   const paths = url.split("/");
   const id = paths[paths.length - 2];
-  return `${baseUrl}${id}.png`;
+  return `${src}${id}.png`;
 }
 
 export async function fetchData(url) {
@@ -19,5 +19,5 @@ export async function fetchData(url) {
 }
 
 export async function fetchPokemon(path = "") {
-  return await fetchData(`${url}${path}`);
+  return await fetchData(`${BASE_URL}${path}`);
 }

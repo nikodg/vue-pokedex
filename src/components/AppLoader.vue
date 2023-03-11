@@ -1,6 +1,6 @@
 <template>
-  <div class="loading-wrap">
-    <div class="loading" />
+  <div class="loader-wrap">
+    <div class="loader" />
   </div>
 </template>
 
@@ -14,13 +14,14 @@
     100% { transform: rotate(360deg); }
   }
 
-  .loading-wrap {
+  .loader-wrap {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 20px;
   }
 
-  .loading {
+  .loader {
     border: 4px solid #f3f3f3;
     border-top: 4px solid var(--pkm-blue);
     border-radius: 50%;

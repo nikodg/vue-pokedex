@@ -2,7 +2,7 @@
   <div class="pokemon-list container">
     <div class="row">
       <div 
-        v-for="pokemon in state.pokemons"
+        v-for="pokemon in pokemonsStore.pokemons"
         :key="pokemon.name"
         class="col-lg-3 col-md-4 col-sm-6 col-xs-12"
       >
@@ -19,22 +19,16 @@
     </div>
 
     <InfiniteScroll 
-      v-if="state.infiniteScroll"
+      v-if="showInfiniteScroll"
       ref="observer"
       @intersect="loadMore" 
     />
 
+    <AppLoader v-if="isFetching" />
+
     <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <button 
-          v-if="!state.infiniteScroll && state.pokemons.length"
-          class="pokemon-button load-more"
-          @click="loadMore"
-        >
-          Load More
-        </button>
-
-        <p v-if="state.hasError">
+        <p v-if="hasError">
           Oops! We could not catch any Pokémon. Please refresh the page so we can try again.
         </p>
       </div>
@@ -43,42 +37,48 @@
 </template>
 
 <script setup>
-  import { reactive, ref } from "vue";
+  import { ref, computed } from "vue";
   import { getImage, fetchPokemon } from "@/utils";
   import { useGoToDetails } from "@/composables/goToDetails";
+  import { usePokemonsStore } from '@/stores/pokemons';
 
   import PokemonCard from "@/components/PokemonCard.vue";
   import InfiniteScroll from "@/components/InfiniteScroll.vue";
+  import AppLoader from "@/components/AppLoader.vue";
 
   const imgBaseUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
+  const pokemonsStore = usePokemonsStore();
   const observer = ref(null);
-  const state = reactive({
-    pokemons: [],
-    offset: 0,
-    hasError: false,
-    infiniteScroll: false,
+  const hasError = ref(false);
+  const isFetching = ref(false);
+
+  const showInfiniteScroll = computed(() => {
+    return pokemonsStore.pokemons.length
+      && !hasError.value
+      && !isFetching.value
   });
 
   async function getPokemons(path = "") {
+    isFetching.value = true;
     let response = await fetchPokemon(path);
     if (!response) return handleError();
-    state.pokemons = state.pokemons.concat(response.results);
+    pokemonsStore.updatePokemons(response.results);
+    isFetching.value = false;
   }
 
   async function loadMore() {
-    state.offset += 20;
-    await getPokemons(`?offset=${state.offset}`);
-    state.infiniteScroll = true;
+    await getPokemons(`?offset=${pokemonsStore.offset}`);
   }
 
   function handleError() {
-    state.hasError = true;
+    hasError.value = true;
     if (observer.value) observer.value.unobserve();
   }
 
   const goToDetails = useGoToDetails();
 
-  getPokemons();
+  if (!pokemonsStore.pokemons.length)
+    getPokemons();
 </script>
 
 <style lang="scss" scoped>
